@@ -1,15 +1,26 @@
 #include "common.h"
 #include "lcd.h"
+#include "serial.h"
+#include <stdio.h>
 
 int main() {
+    SETUP_LEDS();
+    setup_serial();
     lcd_init();
     
-    SET(DDRD, DDD6);
-    SET(PORTD, PORTD6);
-    lcd_write('a');
+    lcd_write(' ');
+    lcd_write('h');
+    lcd_write('e');
+    lcd_write('l');
+    lcd_write('l');
+    lcd_write('o');
+    //lcd_write('b');
+    //lcd_write('c');
     while (true) {
-        _delay_ms(2000);
-        turn_led_y(-1);
+        SET(PORTC, PORTC7);
+        _delay_ms(10);
+        CLR(PORTC, PORTC7);
+        _delay_ms(2);
     }
 
     return 0;

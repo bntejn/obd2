@@ -1,10 +1,10 @@
 PORT ?= /dev/tty.usbmodem1411
 MCU=atmega32u4
-CFLAGS=-g -Wall -mcall-prologues -mmcu=$(MCU) -Os -w -std=c99
+CFLAGS=-g -Wall -mcall-prologues -mmcu=$(MCU) -O0 -w -std=c99
 LDFLAGS=-Wl,-gc-sections -Wl,-relax
 CC=avr-gcc
 TARGET=main
-OBJECT_FILES=main.o lcd.o
+OBJECT_FILES=main.o lcd.o serial.o
 
 all: $(TARGET).hex
 
