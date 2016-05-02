@@ -7,21 +7,22 @@
 #include "lcd.h"
 #include <string.h>
 
-void print_portb(char *msg) {
-    print_char(' ');
-    char buffer[80];
-    char tmp[10];
-    for (int i=0; i<8; i++) {
-        tmp[i] = PORTB & (0x80 >> i) ? '1' : '0';
-    }
-    tmp[8] = '\0';
-    sprintf(buffer, "\"%s\" %s(0x%x) | ", msg, tmp, PORTB);
-    print_str(buffer);
+void lcd_print_str(char *str) {
+    //TODO
 }
 
+void lcd_print_char(char i) {
+    //char lower = i << 4;
+    LCDOUT = i;         //put data on output Port
+    SET(PORTD, PORTD1); // D/I=HIGH: send data
+    CLR(PORTD, PORTD0); // R/W=LOW: write
+    nybble();           //Clock lower 4 bits
+    i = i << 4;         //Shift over by 4 bits
+    LCDOUT = i;         //put data on output Port
+    nybble();           //Clock upper 4 bits
+}
 
-//4-bit Initialization:
-
+/** Send an LCD internal command */
 void lcd_cmd(char i) {
     //char lower = i << 4;
     LCDOUT = i;         //put data on output Port
@@ -34,17 +35,6 @@ void lcd_cmd(char i) {
     nybble();           //Send upper 4 bits
 }
 
-void lcd_write(char i) {
-    //char lower = i << 4;
-    LCDOUT = i;         //put data on output Port
-    SET(PORTD, PORTD1); // D/I=HIGH: send data
-    CLR(PORTD, PORTD0); // R/W=LOW: write
-    nybble();           //Clock lower 4 bits
-    i = i << 4;         //Shift over by 4 bits
-    LCDOUT = i;         //put data on output Port
-    nybble();           //Clock upper 4 bits
-}
-
 void nybble() {
     SET(PORTD, PORTD4);
     _delay_ms(300);       //enable pulse width >= 300ns
@@ -52,6 +42,7 @@ void nybble() {
     CLR(PORTD, PORTD4); //Clock enable: falling edge
 }
 
+/** 4-bit Initialization */
 void lcd_init() {
     SET(DDRD, DDD6);
     SET(PORTD, PORTD6);
@@ -72,11 +63,23 @@ void lcd_init() {
     _delay_ms(10); //can check busy flag now instead of delay
     LCDOUT = 0x20; //put 0x20 on the output port
     nybble(); //Function set: 4-bit interface
-    print_portb("after 0x20");
     lcd_cmd(0x28); //Function set: 4-bit/2-line
     lcd_cmd(0x10); //Set cursor
     lcd_cmd(0x0F); //Display ON; Blinking cursor
     lcd_cmd(0x06); //Entry Mode set
-    print_portb("after 0x06");
+    lcd_print_char(' ');
+}
+
+/** Print the value of PORTB register in bit sequence (for debug purpose) */
+void print_portb(char *msg) {
+    print_char(' ');
+    char buffer[80];
+    char tmp[10];
+    for (int i=0; i<8; i++) {
+        tmp[i] = PORTB & (0x80 >> i) ? '1' : '0';
+    }
+    tmp[8] = '\0';
+    sprintf(buffer, "\"%s\" %s(0x%x) | ", msg, tmp, PORTB);
+    print_str(buffer);
 }
 

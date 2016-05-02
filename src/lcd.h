@@ -4,18 +4,14 @@
 #include "common.h"
 #include "serial.h"
 
-
-#define D_I PORTD1
-#define R_W PORTD0
-#define E   PORTD4 (4)
+/*
+D_I PORTD1
+R_W PORTD0
+E   PORTD4 (4)
+*/
 #define LCDOUT  PORTB
 
-void lcd_init();
-
-void lcd_cmd(char c);
-
-void lcd_write(char c);
-
+// output-RS-RW-E
 #define PULLUP_OUT_REGS() {\
     DDRB = 0xf0;\
     SET(DDRD, DDD1);\
@@ -23,7 +19,19 @@ void lcd_write(char c);
     SET(DDRD, DDD4);\
     SET(DDRC, DDC7);\
 }
-// output-RS-RW-E
+
+/** Initialize the LCD (4-bit mode) */
+void lcd_init();
+
+/** print a single character on LCD 
+ * @param c     a charcter to print
+ * */
+void lcd_print_char(char c);
+
+/** print a string to LCD 
+ * @param str   a string to print 
+ * */
+void lcd_print_str(char *str);
 
 #endif
 

@@ -8,14 +8,13 @@ int main() {
     setup_serial();
     lcd_init();
     
-    lcd_write(' ');
-    lcd_write('h');
-    lcd_write('e');
-    lcd_write('l');
-    lcd_write('l');
-    lcd_write('o');
-    //lcd_write('b');
-    //lcd_write('c');
+    lcd_print_char('h');
+    lcd_print_char('e');
+    lcd_print_char('l');
+    lcd_print_char('l');
+    lcd_print_char('o');
+    //lcd_print_char('b');
+    //lcd_print_char('c');
     while (true) {
         SET(PORTC, PORTC7);
         _delay_ms(10);
