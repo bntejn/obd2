@@ -1,6 +1,11 @@
-/** LCD (NHD-0420H1Z-FL-GBW-33V3) setup and write function.
- * Brought from its datasheet.
- * spec: 4 lines x 20 characters
+/** lcd.c
+ *
+ * LCD (NHD-0420H1Z-FL-GBW-33V3) setup and write function.
+ * Partially brought from its datasheet.
+ * spec: 4 lines x 20 characters (only 2 lines are available for output)
+ *
+ * Taejoon Byun <taejoon@umn.edu>
+ * May 2 2016
  */
 
 #include "common.h"
@@ -8,7 +13,16 @@
 #include <string.h>
 
 void lcd_print_str(char *str) {
-    //TODO
+    lcd_cmd(0x01);      // clear LCD
+    for (int i=0; i<MAX_STRLEN && str[i]!='\0'; i++) {
+        if (str[i] == '\n') {
+            for (int j=0; j<MAX_STRLEN/2-i; j++) {
+                lcd_print_char(' ');
+            }
+            continue;
+        }
+        lcd_print_char(str[i]);
+    }
 }
 
 void lcd_print_char(char i) {
@@ -37,7 +51,7 @@ void lcd_cmd(char i) {
 
 void nybble() {
     SET(PORTD, PORTD4);
-    _delay_ms(300);       //enable pulse width >= 300ns
+    _delay_ms(30);       //enable pulse width >= 300ns
     //print_char('n');
     CLR(PORTD, PORTD4); //Clock enable: falling edge
 }
@@ -65,7 +79,8 @@ void lcd_init() {
     nybble(); //Function set: 4-bit interface
     lcd_cmd(0x28); //Function set: 4-bit/2-line
     lcd_cmd(0x10); //Set cursor
-    lcd_cmd(0x0F); //Display ON; Blinking cursor
+    //lcd_cmd(0x0F); //Display ON; Blinking cursor
+    lcd_cmd(0x0C); //Display ON; no cursor
     lcd_cmd(0x06); //Entry Mode set
     lcd_print_char(' ');
 }

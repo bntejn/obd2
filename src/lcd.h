@@ -20,6 +20,8 @@ E   PORTD4 (4)
     SET(DDRC, DDC7);\
 }
 
+#define MAX_STRLEN 40
+
 /** Initialize the LCD (4-bit mode) */
 void lcd_init();
 
